@@ -1,26 +1,35 @@
 plugins {
     id 'java'
+    id 'application'
 }
 
-group 'org.example'
-version '1.0-SNAPSHOT'
-
 repositories {
-    mavenCentral()
+    jcenter()
 }
 
 dependencies {
     implementation 'com.google.code.gson:gson:2.10.1'
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
 }
 
-test {
-    useJUnitPlatform()
-}
+mainClassName = 'com.example.gradle'
 jar {
     manifest {
-        attributes 'Main-Class': 'App'
+        attributes 'Main-Class': mainClassName
     }
-    from configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+}
+
+task fatJar(type: Jar) {
+    archiveClassifier = 'fat'
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    with jar
+}
+
+tasks.named('build') {
+    dependsOn fatJar
+}
+
+wrapper {
+    gradleVersion = '7.2'
 }

@@ -1,3 +1,6 @@
+package com.example.gradle;
+
+import com.example.gradle.Person;
 import com.google.gson.Gson;
 
 public class Main {
